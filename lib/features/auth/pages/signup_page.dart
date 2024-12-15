@@ -25,7 +25,7 @@ class _SignUpPageState extends State<SignUpPage> {
     emailController.dispose();
     passwordController.dispose();
     nameController.dispose();
-    formKey.currentState!.validate();
+    // formKey.currentState!.validate();
     super.dispose();
   }
 

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:frontend/features/auth/cubit/auth_cubit.dart';
 import 'package:frontend/features/auth/pages/signup_page.dart';
+import 'package:frontend/features/home/pages/home_page.dart';
 
 class LoginPage extends StatefulWidget {
   static MaterialPageRoute route() =>
@@ -23,7 +24,7 @@ class _LoginPageState extends State<LoginPage> {
     // TODO: implement dispose
     emailController.dispose();
     passwordController.dispose();
-    formKey.currentState!.validate();
+    // formKey.currentState!.validate();
     super.dispose();
   }
 
@@ -45,9 +46,8 @@ class _LoginPageState extends State<LoginPage> {
               SnackBar(content: Text(state.error)),
             );
           } else if (state is AuthLoggedIn) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Successfull LogedIn')),
-            );
+            Navigator.pushAndRemoveUntil(
+                context, HomePage.route(), (_) => false);
           }
         }, builder: (context, state) {
           if (state is AuthLoading) {
@@ -60,7 +60,7 @@ class _LoginPageState extends State<LoginPage> {
               child: Column(
                 children: [
                   Text(
-                    "Sign Up.",
+                    "LogIn",
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 50),
                   ),
                   SizedBox(
