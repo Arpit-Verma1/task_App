@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:frontend/core/services/sp_services.dart';
+import 'package:frontend/features/auth/repository/auth_local_reposistory.dart';
 import 'package:frontend/features/auth/repository/auth_remote_repository.dart';
 import 'package:frontend/models/user_model.dart';
 
@@ -10,12 +11,14 @@ class AuthCubit extends Cubit<AuthState> {
 
   final authRemoteRepository = AuthRemoteRepository();
   final spService = SpService();
+  final authLocalRepository = AuthLocalRepository();
 
   void getUserData() async {
     try {
       emit(AuthLoading());
       final userModel = await authRemoteRepository.getUserData();
       if (userModel != null) {
+        await authLocalRepository.insertUser(userModel);
         emit(AuthLoggedIn(userModel));
         return ;
       }
@@ -49,6 +52,7 @@ class AuthCubit extends Cubit<AuthState> {
         print("token is ${userModel.token}");
         spService.setToken(userModel.token!);
       }
+      await authLocalRepository.insertUser(userModel);
       emit(AuthLoggedIn(userModel));
     } catch (e) {
       emit(AuthError(e.toString()));

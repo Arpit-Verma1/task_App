@@ -53,8 +53,8 @@ class UserModel {
     map['email'] = _email;
     map['name'] = _name;
     map['token'] = _token;
-    map['createdAt'] = _createdAt;
-    map['updatedAt'] = _updatedAt;
+    map['createdAt'] = _createdAt?.millisecondsSinceEpoch;
+    map['updatedAt'] = _updatedAt?.millisecondsSinceEpoch;
     return map;
   }
 
