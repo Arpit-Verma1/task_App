@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend/core/constants/utils.dart';
+import 'package:frontend/features/home/pages/add_new_task_page.dart';
 import 'package:frontend/features/home/widgets/date_selector.dart';
 import 'package:frontend/features/home/widgets/task_card.dart';
 
@@ -23,7 +24,9 @@ class _HomePageState extends State<HomePage> {
           centerTitle: true,
           actions: [
             IconButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(context, AddNewTaskPage.route());
+              },
               icon: const Icon(CupertinoIcons.add),
             ),
           ],
