@@ -1,5 +1,8 @@
 import 'package:flex_color_picker/flex_color_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:frontend/features/auth/cubit/auth_cubit.dart';
+import 'package:frontend/features/home/cubit/add_new_taks_cubit.dart';
 import 'package:intl/intl.dart';
 
 class AddNewTaskPage extends StatefulWidget {
@@ -17,6 +20,28 @@ class _AddNewTaskPageState extends State<AddNewTaskPage> {
   TextEditingController titleController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
   Color selectedColor = const Color.fromRGBO(246, 222, 194, 1);
+  final formKey = GlobalKey<FormState>();
+
+  void createNewTask() async {
+    if (formKey.currentState!.validate()) {
+      AuthLoggedIn user = context.read<AuthCubit>().state as AuthLoggedIn;
+      await context.read<AddNewTaskCubit>().createNewTask(
+            title: titleController.text.trim(),
+            description: descriptionController.text.trim(),
+            hexColor: selectedColor,
+            dueDate: selectedDate,
+            token: user.user.token!,
+          );
+    }
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    descriptionController.dispose();
+    titleController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,46 +70,86 @@ class _AddNewTaskPageState extends State<AddNewTaskPage> {
           )
         ],
       ),
-      body: Padding(
-        padding: EdgeInsets.all(8),
-        child: Column(
-          children: [
-            TextFormField(
-              controller: titleController,
-              decoration: const InputDecoration(hintText: 'Title'),
+      body: BlocConsumer<AddNewTaskCubit, AddNewTaskState>(
+          builder: (BuildContext context, state) {
+        if (state is AddNewTaskLoading)
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+
+        return Padding(
+          padding: EdgeInsets.all(8),
+          child: Form(
+            key: formKey,
+            child: Column(
+              children: [
+                TextFormField(
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return "Title can not be emoty";
+                    }
+                    return null;
+                  },
+                  controller: titleController,
+                  decoration: const InputDecoration(hintText: 'Title'),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                TextFormField(
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return "Description can not be emoty";
+                    }
+                    return null;
+                  },
+                  controller: descriptionController,
+                  decoration: const InputDecoration(hintText: 'Description'),
+                  maxLines: 5,
+                ),
+                ColorPicker(
+                  heading: const Text('Select color'),
+                  subheading: const Text('Select SubHeading'),
+                  onColorChanged: (Color color) {
+                    setState(() {
+                      selectedColor = color;
+                    });
+                  },
+                  color: selectedColor,
+                  pickersEnabled: {ColorPickerType.wheel: true},
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    createNewTask();
+                  },
+                  child: Text(
+                    'Submit',
+                    style: TextStyle(color: Colors.white, fontSize: 18),
+                  ),
+                )
+              ],
             ),
-            const SizedBox(
-              height: 10,
+          ),
+        );
+      }, listener: (BuildContext context, AddNewTaskState state) {
+        if (state is AddNewTaskError)
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.error),
             ),
-            TextFormField(
-              controller: descriptionController,
-              decoration: const InputDecoration(hintText: 'Description'),
-              maxLines: 5,
+          );
+        else if (state is AddNewTaskSuccess) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text("Task Added successfully"),
             ),
-            ColorPicker(
-              heading: const Text('Select color'),
-              subheading: const Text('Select SubHeading'),
-              onColorChanged: (Color color) {
-                setState(() {
-                  selectedColor = color;
-                });
-              },
-              color: selectedColor,
-              pickersEnabled: {ColorPickerType.wheel: true},
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            ElevatedButton(
-              onPressed: () {},
-              child: Text(
-                'Submit',
-                style: TextStyle(color: Colors.white,fontSize: 18),
-              ),
-            )
-          ],
-        ),
-      ),
+          );
+          Navigator.pop(context);
+        }
+      }),
     );
   }
 }
