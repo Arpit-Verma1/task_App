@@ -33,4 +33,27 @@ class TasksRemoteRepository {
       throw (e.toString());
     }
   }
+
+  Future<List<TaskModel>> getTasks({required String token}) async {
+    try {
+      final res = await http.get(
+        Uri.parse("${Constants.backendURL}/tasks/"),
+        headers: {'Content-Type': 'application/json', 'x-auth-token': token},
+      );
+
+      if (res.statusCode != 200) {
+        throw jsonDecode(res.body)['error'];
+      }
+      final listOfTasks = jsonDecode(res.body);
+      List<TaskModel> allTask = [];
+
+      for (var elem in listOfTasks) {
+        allTask.add(TaskModel.fromJson(elem));
+      }
+
+      return allTask;
+    } catch (e) {
+      throw (e.toString());
+    }
+  }
 }

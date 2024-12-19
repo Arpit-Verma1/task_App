@@ -2,7 +2,8 @@ import 'package:flex_color_picker/flex_color_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:frontend/features/auth/cubit/auth_cubit.dart';
-import 'package:frontend/features/home/cubit/add_new_taks_cubit.dart';
+import 'package:frontend/features/home/cubit/taks_cubit.dart';
+import 'package:frontend/features/home/pages/home_page.dart';
 import 'package:intl/intl.dart';
 
 class AddNewTaskPage extends StatefulWidget {
@@ -25,7 +26,7 @@ class _AddNewTaskPageState extends State<AddNewTaskPage> {
   void createNewTask() async {
     if (formKey.currentState!.validate()) {
       AuthLoggedIn user = context.read<AuthCubit>().state as AuthLoggedIn;
-      await context.read<AddNewTaskCubit>().createNewTask(
+      await context.read<TasksCubit>().createNewTask(
             title: titleController.text.trim(),
             description: descriptionController.text.trim(),
             hexColor: selectedColor,
@@ -70,9 +71,9 @@ class _AddNewTaskPageState extends State<AddNewTaskPage> {
           )
         ],
       ),
-      body: BlocConsumer<AddNewTaskCubit, AddNewTaskState>(
+      body: BlocConsumer<TasksCubit, TasksState>(
           builder: (BuildContext context, state) {
-        if (state is AddNewTaskLoading)
+        if (state is TasksLoading)
           return const Center(
             child: CircularProgressIndicator(),
           );
@@ -134,8 +135,8 @@ class _AddNewTaskPageState extends State<AddNewTaskPage> {
             ),
           ),
         );
-      }, listener: (BuildContext context, AddNewTaskState state) {
-        if (state is AddNewTaskError)
+      }, listener: (BuildContext context, TasksState state) {
+        if (state is TasksError)
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(state.error),
@@ -147,7 +148,7 @@ class _AddNewTaskPageState extends State<AddNewTaskPage> {
               content: Text("Task Added successfully"),
             ),
           );
-          Navigator.pop(context);
+          Navigator.pushAndRemoveUntil(context, HomePage.route(), (_) => false);
         }
       }),
     );
