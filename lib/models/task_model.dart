@@ -39,9 +39,9 @@ class TaskModel {
     data['uid'] = this.uid;
     data['title'] = this.title;
     data['description'] = this.description;
-    data['createdAt'] = this.createdAt;
-    data['updatedAt'] = this.updatedAt;
-    data['deuAt'] = this.dueAt;
+    data['createdAt'] = this.createdAt!.toIso8601String();
+    data['updatedAt'] = this.updatedAt!.toIso8601String();
+    data['deuAt'] = this.dueAt!.toIso8601String();
     data['color'] = rgbToHex(this.color!);
     return data;
   }

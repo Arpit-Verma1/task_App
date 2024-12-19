@@ -9,7 +9,7 @@ import 'package:http/http.dart' as http;
 class AuthRemoteRepository {
   final spService = SpService();
   final authLocalRepository = AuthLocalRepository();
-
+  //
   Future<UserModel> signUp(
       {required String name,
       required String email,

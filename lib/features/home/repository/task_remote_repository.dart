@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:frontend/features/home/repository/taks_local_repository.dart';
 import 'package:frontend/models/task_model.dart';
 import 'package:http/http.dart' as http;
 import 'package:frontend/core/constants/constants.dart';
@@ -35,6 +36,7 @@ class TasksRemoteRepository {
   }
 
   Future<List<TaskModel>> getTasks({required String token}) async {
+    final taskLocalRepository = TaksLocalRepository();
     try {
       final res = await http.get(
         Uri.parse("${Constants.backendURL}/tasks/"),
@@ -51,8 +53,10 @@ class TasksRemoteRepository {
         allTask.add(TaskModel.fromJson(elem));
       }
 
+      await taskLocalRepository.insertTasks(allTask);
       return allTask;
     } catch (e) {
+
       throw (e.toString());
     }
   }
