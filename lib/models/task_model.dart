@@ -11,6 +11,7 @@ class TaskModel {
   DateTime? updatedAt;
   DateTime? dueAt;
   Color? color;
+   int? isSynced;
 
   TaskModel(
       {this.id,
@@ -20,29 +21,35 @@ class TaskModel {
       this.createdAt,
       this.updatedAt,
       this.dueAt,
-      this.color});
+      this.color,
+        this.isSynced,
+      });
 
   TaskModel.fromJson(Map<String, dynamic> json) {
+    print("taks $json");
     id = json['id'] ?? '';
-    uid = json['uid'] ?? '';
+    uid = json['uuid'] ?? '';
     title = json['title'] ?? '';
     description = json['description'] ?? '';
     createdAt = DateTime.parse(json['createdAt'] ?? '');
     updatedAt = DateTime.parse(json['updatedAt']);
     dueAt = DateTime.parse(json['dueAt']);
     color  = hexToRgb(json['hexColor']);
+    isSynced = json['isSynced']?? 1;
+
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['id'] = this.id;
-    data['uid'] = this.uid;
+    data['uuid'] = this.uid;
     data['title'] = this.title;
     data['description'] = this.description;
     data['createdAt'] = this.createdAt!.toIso8601String();
     data['updatedAt'] = this.updatedAt!.toIso8601String();
-    data['deuAt'] = this.dueAt!.toIso8601String();
-    data['color'] = rgbToHex(this.color!);
+    data['dueAt'] = this.dueAt!.toIso8601String();
+    data['hexColor'] = rgbToHex(this.color!);
+    data['isSynced'] = isSynced;
     return data;
   }
 }

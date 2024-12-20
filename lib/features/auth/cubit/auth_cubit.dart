@@ -18,8 +18,8 @@ class AuthCubit extends Cubit<AuthState> {
       emit(AuthLoading());
       final userModel = await authRemoteRepository.getUserData();
       if (userModel != null) {
-        await authLocalRepository.insertUser(userModel);
-        emit(AuthLoggedIn(userModel));
+       final userModel= await authLocalRepository.getUser();
+        emit(AuthLoggedIn(userModel!));
         return ;
       }
       emit(AuthInitial());

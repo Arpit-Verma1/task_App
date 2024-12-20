@@ -25,11 +25,12 @@ class TaksLocalRepository {
         id TEXT PRIMARY KEY,
         title TEXT NOT NULL,
         description TEXT NOT NULL,
-        uid TEXT NOT NULL,
-        color TEXT NOT NULL,
-        deuAt TEXT NOT NULL,
+        uuid TEXT NOT NULL,
+        hexColor TEXT NOT NULL,
+        dueAt TEXT NOT NULL,
         createdAt TEXT NOT NULL,
-        updatedAt TEXT NOT NULL
+        updatedAt TEXT NOT NULL,
+        isSynced INTEGER NOT NULL   
         )
         ''');
     });
@@ -60,5 +61,31 @@ class TaksLocalRepository {
       return allTasks;
     }
     return [];
+  }
+
+  Future<List<TaskModel>> getUnsyncedTasks() async {
+    final db = await database;
+    final result = await db.query(
+      tableName,
+      where: 'isSynced = ?', // Proper SQL syntax here
+      whereArgs: [0], // The value to substitute the "?" placeholder
+    );
+
+    if (result.isNotEmpty) {
+      List<TaskModel> allTasks = [];
+      for (var task in result) allTasks.add(TaskModel.fromJson(task));
+      return allTasks;
+    }
+    return [];
+  }
+
+  Future<void> updateRowValue(String id, int newValue) async {
+    final db = await database;
+    await db.update(
+      tableName,
+      {'isSynced': newValue},
+      where: 'id = ?', // Proper SQL syntax here
+      whereArgs: [id], // The value to substitute the "?" placeholder
+    );
   }
 }

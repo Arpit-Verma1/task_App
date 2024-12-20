@@ -27,6 +27,7 @@ class _AddNewTaskPageState extends State<AddNewTaskPage> {
     if (formKey.currentState!.validate()) {
       AuthLoggedIn user = context.read<AuthCubit>().state as AuthLoggedIn;
       await context.read<TasksCubit>().createNewTask(
+            uid: user.user.id!,
             title: titleController.text.trim(),
             description: descriptionController.text.trim(),
             hexColor: selectedColor,

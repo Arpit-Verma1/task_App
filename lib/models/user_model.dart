@@ -25,13 +25,15 @@ class UserModel {
   }
 
   UserModel.fromJson(dynamic json) {
-    print("decoding");
+    print("decoding $json");
+
     _id = json['id']??"";
     _email = json['email']??"";
     _name = json['name']??"";
     _token = json['token']??"";
     _createdAt = DateTime.parse(json['createdAt']??"");
     _updatedAt =DateTime.parse(json['createdAt']??"");
+    print("decoding done");
   }
   String? _id;
   String? _email;

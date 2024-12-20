@@ -42,7 +42,7 @@ class AuthLocalRepository {
     final db = await database;
     final result = await db.query(tableName, limit: 1);
     if (result.isNotEmpty)
-      UserModel.fromJson(result.first);
+     return UserModel.fromJson(result.first);
     return null;
   }
 
